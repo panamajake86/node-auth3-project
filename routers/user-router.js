@@ -1,10 +1,10 @@
 const router = require('express').Router();
-const bcrypt = require('bcryptjs');
 
 const Users = require('../modules/user-module');
 const restricted = require('../middleware/restricted-middleware');
+const checkRole = require('../middleware/check-role-middleware');
 
-router.get('/', restricted, (req, res) => {
+router.get('/', restricted, checkRole('Admin'), (req, res) => {
     Users.find()
         .then(users => {
             res.json(users);

@@ -1,7 +1,21 @@
+const jwt = require('jsonwebtoken');
+const secrets = require('../data/secrets');
+
 module.exports = (req, res, next) => {
-    if (req.session.loggedin && (req.session.loggedin === true)) {
+    const token = req.headers.authorization;
+
+    if (req.decodedJwt) {
         next();
+    } else if (token) {
+        jwt.verify(token, secrets.jwtSecret, (err, decodedJwt) => {
+            if (err) {
+                res.status(401).json({ message: 'Son...you got a panty on your head.' })
+            } else {
+                req.decodedJwt = decodedJwt;
+                next();
+            }
+        })
     } else {
-        res.status(400).json({ message: 'you’re young and you got your health, what you want with a job?' })
+        res.status(401).json({ message: 'Son...you got a panty on your head.' });
     }
 };
